@@ -1,6 +1,6 @@
 [project]
 name = "similarity-matrix"
-version = "0.1.20"
+version = "0.2.0"
 authors = [
   { name="Federico Manzella", email="federico.manzella@unife.it" },
   { name="Pietro Casavecchia", email="pietro.casavecchia@edu.unife.it" },

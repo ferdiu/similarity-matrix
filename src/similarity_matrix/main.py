@@ -43,7 +43,7 @@ def main():
     parser.add_argument(
         '--version',
         action='version',
-        version='0.1.20')
+        version='0.2.0')
     parser.add_argument(
         '--debug',
         action='store_true',
