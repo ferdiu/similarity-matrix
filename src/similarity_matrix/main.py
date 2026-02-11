@@ -43,7 +43,7 @@ def main():
     parser.add_argument(
         '--version',
         action='version',
-        version='0.1.3')
+        version='0.1.20')
     parser.add_argument(
         '--debug',
         action='store_true',
@@ -51,27 +51,27 @@ def main():
     parser.add_argument(
         '--db-host',
         metavar='DB_HOST',
-        default=None,
+        default=os.environ.get('DB_HOST', 'localhost'),
         help='database host (default: localhost)')
     parser.add_argument(
         '--db-port',
         metavar='DB_PORT',
-        default=None,
+        default=os.environ.get('DB_PORT', '3306'),
         help='database port (default: 3306)')
     parser.add_argument(
         '--db-name',
         metavar='DB_DATABASE',
-        default=None,
-        help='database name (default: universitaly)')
+        default=os.environ.get('DB_DATABASE'),
+        help='database name')
     parser.add_argument(
         '--db-user',
         metavar='DB_USERNAME',
-        default=None,
+        default=os.environ.get('DB_USERNAME'),
         help='database user (can be passed through .env DB_USERNAME)')
     parser.add_argument(
         '--db-password',
         metavar='DB_PASSWORD',
-        default=None,
+        default=os.environ.get('DB_PASSWORD'),
         help='database password (can be passed through .env DB_PASSWORD)')
     parser.add_argument(
         '--pipeline-dir',
@@ -137,36 +137,29 @@ def main():
 
     # ---------------------------------------
     # Database
-    if args.db_host is None:
-        args.db_host = os.environ.get('DB_HOST') or 'localhost'
-    if args.db_port is None:
-        try:
-            args.db_port = int(os.environ.get('DB_PORT') or '3306')
-        except ValueError:
-            logger.error('Invalid port number')
-            exit(1)
-    if args.db_user is None:
-        args.db_user = os.environ.get('DB_USERNAME')
-    if args.db_password is None:
-        args.db_password = os.environ.get('DB_PASSWORD')
-    if args.db_name is None:
-        args.db_name = os.environ.get('DB_DATABASE') or 'universitaly'
-
-    if not args.db_user or not args.db_password:
-        logger.error('No username or password for the db were passed')
+    try:
+        args.db_port = int(args.db_port)
+    except ValueError:
+        logger.error(f'Invalid port number {args.db_port}')
         exit(1)
 
-    db = Database(
-        args.db_host,
-        args.db_port,
-        args.db_user,
-        args.db_password,
-        args.db_name)
+    # Configure database only if a username was provided
+    if args.db_user is not None:
+        db = Database(
+            args.db_host,
+            args.db_port,
+            args.db_user,
+            args.db_password,
+            args.db_name)
 
-    e = db.test_connection()
-    if e is not None:
-        logger.error('Error connecting to the database')
-        raise e
+        e = db.test_connection()
+        if e is not None:
+            logger.error('Error connecting to the database')
+            raise e
+    else:
+        db = None
+        logger.info(
+            "Database username not set: ignoring database configuration")
 
     # ---------------------------------------
     # Pipeline

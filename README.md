@@ -27,9 +27,9 @@ similarity-matrix [options] <action> [action options]
 
 | Option | Default | Description |
 |---|---|---|
-| `--db-host` | `localhost` | Database host |
-| `--db-port` | `3306` | Database port |
-| `--db-name` | `universitaly` | Database name |
+| `--db-host` | `localhost` | Database host (or via `DB_HOST` in `.env`) |
+| `--db-port` | `3306` | Database port (or via `DB_PORT` in `.env`) |
+| `--db-name` | — | Database name (or via `DB_DATABASE` in `.env`) |
 | `--db-user` | — | Database user (or via `DB_USERNAME` in `.env`) |
 | `--db-password` | — | Database password (or via `DB_PASSWORD` in `.env`) |
 | `--pipeline-dir` | `./pipelines` | Path to directory containing pipeline files |

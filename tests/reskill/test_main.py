@@ -100,7 +100,7 @@ class TestMainFunction:
         assert exc_info.value.code == 0
         mock_load_dotenv.assert_called_once()
         mock_database_class.assert_called_once_with(
-            'localhost', 3306, 'testuser', 'testpass', 'universitaly'
+            'localhost', 3306, 'testuser', 'testpass', None
         )
         mock_db.test_connection.assert_called_once()
         mock_pipeline_class.load_default_pipelines.assert_called_once()
@@ -125,12 +125,14 @@ class TestMainFunction:
         ]
 
         # Mock environment variables
-        def env_side_effect(key):
+        def env_side_effect(key, default=None):
             if key == 'DB_USERNAME':
                 return 'env_user'
             elif key == 'DB_PASSWORD':
                 return 'env_pass'
-            return None
+            elif key == 'DB_DATABASE':
+                return 'env_db_name'
+            return default
 
         mock_env_get.side_effect = env_side_effect
 
@@ -154,7 +156,7 @@ class TestMainFunction:
                 main()
 
             mock_database_class.assert_called_once_with(
-                'localhost', 3306, 'env_user', 'env_pass', 'universitaly'
+                'localhost', 3306, 'env_user', 'env_pass', 'env_db_name'
             )
 
     @patch('similarity_matrix.main.load_dotenv')
@@ -166,12 +168,21 @@ class TestMainFunction:
             'update-db-row'
         ]
 
-        with patch('os.environ.get', return_value=None), \
+        with patch('similarity_matrix.main.Database') as mock_database_class, \
+                patch('similarity_matrix.main.Pipeline') as mock_pipeline_class, \
                 patch('sys.argv', test_args):
-            with pytest.raises(SystemExit) as exc_info:
+
+            # Mock pipeline
+            mock_pipeline_instance = Mock()
+            mock_available_pipelines = {
+                'test_pipeline': Mock(
+                    return_value=mock_pipeline_instance)}
+            mock_pipeline_class.load_from_dir.return_value = mock_available_pipelines
+
+            with pytest.raises(SystemExit):
                 main()
 
-            assert exc_info.value.code == 1
+            mock_database_class.assert_not_called()
 
     @patch('similarity_matrix.main.load_dotenv')
     @patch('similarity_matrix.main.Database')
@@ -360,7 +371,7 @@ class TestMainFunction:
 
         assert exc_info.value.code == 0
         mock_database_class.assert_called_once_with(
-            'custom-host', '5432', 'testuser', 'testpass', 'custom_db'
+            'custom-host', 5432, 'testuser', 'testpass', 'custom_db'
         )
 
     @patch('similarity_matrix.main.load_dotenv')
@@ -489,7 +500,7 @@ class TestIntegration:
                 # Verify all components were called correctly
                 mock_load_dotenv.assert_called_once()
                 mock_database_class.assert_called_once_with(
-                    'test-host', '3307', 'test_user', 'test_pass', 'test_db'
+                    'test-host', 3307, 'test_user', 'test_pass', 'test_db'
                 )
                 mock_db.test_connection.assert_called_once()
                 mock_pipeline_class.load_from_dir.assert_called_once_with(
