@@ -1,31 +1,31 @@
 [project]
 name = "similarity-matrix"
-version = "0.2.0"
+version = "0.2.1"
 authors = [
   { name="Federico Manzella", email="federico.manzella@unife.it" },
   { name="Pietro Casavecchia", email="pietro.casavecchia@edu.unife.it" },
 ]
 description = "Compute similarity between two sets of texts"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "accelerate",
-    "einops",
-    "mysql-connector-python",
-    "nltk",
-    "python-decouple",
-    "python-dotenv",
-    "sentence_transformers",
-    "numpy",
-    "pymysql",
-    "torch",
-    "scipy",
-    "transformers<=4.57.6",
+    "accelerate>=1.12,<2.0",
+    "einops>=0.8,<0.9",
+    "mysql-connector-python>=9.6,<10.0",
+    "nltk>=3.9,<4.0",
+    "python-decouple>=3.8,<4.0",
+    "python-dotenv>=1.2,<2.0",
+    "sentence-transformers>=5.2,<6.0",
+    "numpy>=2.4,<3.0",
+    "pymysql>=1.1,<2.0",
+    "torch>=2.10,<3.0",
+    "scipy>=1.17,<2.0",
+    "transformers>=4.57,<5.0",
 ]
 
 [project.urls]
