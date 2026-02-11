@@ -205,8 +205,8 @@ class ChunkedSimilarityMatrix(SimilarityMatrix):
                         chunk_matrix, row_pointers_chunk, col_pointers_chunk, tail_weight=0.2)
 
                 # Save aggregated chunk to temporary file
-                chunk_fname = f"{
-                    self.name}_chunk_{row_chunk_idx}_{col_chunk_idx}.npy"
+                chunk_fname = f"{self.name}_chunk_" +\
+                    f"{row_chunk_idx}_{col_chunk_idx}.npy"
                 chunk_path = temp_path / chunk_fname
                 np.save(chunk_path, chunk_matrix)
 
