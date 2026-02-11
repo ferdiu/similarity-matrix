@@ -25,6 +25,7 @@ dependencies = [
     "pymysql",
     "torch",
     "scipy",
+    "transformers<=4.57.6",
 ]
 
 [project.urls]

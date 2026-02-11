@@ -48,10 +48,10 @@ class MockPipeline(Pipeline):
     each topic based on their text descriptions.
     """
 
-    def __init__(self, db: Database, path: str = "./matrices"):
+    def __init__(self, name: str, db: Database, path: str = "./matrices"):
         # `db` is injected by the framework and kept on self.db, but we
         # don't use it here — all data comes from the dicts above.
-        super().__init__(name="mock", db=db, path=path)
+        super().__init__(name, db=db, path=path)
 
     # -----------------------------------------------------------------------
     # IDs
@@ -127,5 +127,5 @@ class MockPipeline(Pipeline):
         Example postprocessing: clamp all scores below 0.1 to 0.0 to remove
         noise from very dissimilar pairs.
         """
-        self._sm.data[self._sm.data < 0.1] = 0.0
+        self._sm.matrix[self._sm.matrix < 0.1] = 0.0
         return self._sm
