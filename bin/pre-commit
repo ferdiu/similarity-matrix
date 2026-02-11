@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ -d ".git" ] && [ ! -e ".git/hooks/pre-commit" ]; then
+    ln -s ../../bin/pre-commit .git/hooks/"$(basename $0)"
+fi
+
+echo "#################################"
+echo "##                             ##"
+echo "##   RUNNING PRE-COMMIT HOOK   ##"
+echo "##                             ##"
+echo "#################################"
+echo
+
+# Helper function to find tracked Python files while ignoring submodules
+find_tracked_python_files() {
+    # List tracked files (ignores submodules)
+    git ls-files -- '*.py' | grep -E "^(src|tests)/"
+
+    # List newly staged but uncommitted files
+    git diff --cached --name-only --diff-filter=ACM -- '*.py' | grep -E "^(src|tests)/"
+}
+
+
+echo "1. Enforcing style \`autopep8 --in-place --aggressive --aggressive --exit-code \"{src,tests}*.py\"\`"
+# E402 is ignored to allow imports at the top of the file
+autopep8 --in-place --ignore=E402 --aggressive --aggressive --exit-code $(find_tracked_python_files)
+echo
+
+echo "2. Checking for syntax errors \`flake8 . --select=E9,F63,F7,F82 --show-source --statistics \"{src,tests}*.py\"\`"
+flake8 . --select=E9,F63,F7,F82 --show-source --statistics --filename $(find_tracked_python_files | tr "\n" ",")
+echo
+
+echo "3. Exit with error if flake8 fails \`flake8 . --max-complexity=10 --max-line-length=127 --statistics \"{src,tests}*.py\"\`"
+flake8 . --max-complexity=10 --max-line-length=127 --statistics --filename $(find_tracked_python_files | tr "\n" ",")
+echo
+
+echo "4. Running tests \`pytest\`"
+pytest
+echo
+
+echo "5. Running coverage \`pytest-cov\`"
+pytest --cov src --cov-fail-under 75
+echo
+
+echo "6. The pre-commit hook has finished successfully!"
+echo "Bye ;)"
+echo

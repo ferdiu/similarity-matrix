@@ -1,0 +1,64 @@
+[project]
+name = "similarity-matrix"
+version = "0.1.20"
+authors = [
+  { name="Federico Manzella", email="federico.manzella@unife.it" },
+  { name="Pietro Casavecchia", email="pietro.casavecchia@edu.unife.it" },
+]
+description = "Compute similarity between two sets of texts"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "accelerate",
+    "einops",
+    "mysql-connector-python",
+    "nltk",
+    "python-decouple",
+    "python-dotenv",
+    "sentence_transformers",
+    "numpy",
+    "pymysql",
+    "torch",
+    "scipy",
+]
+
+[project.urls]
+Homepage = "https://github.com/ferdiu/similarity-matrix"
+Issues = "https://github.com/ferdiu/similarity-matrix/issues"
+
+[project.optional-dependencies]
+dev = ["autopep8"]
+test = [
+  "flake8",
+  "pytest",
+  "pytest-cov"
+]
+
+[project.scripts]
+similarity-matrix = "similarity_matrix.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.sdist]
+include = ["src/similarity_matrix/**", "tests/"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/similarity_matrix"]
+
+[tool.pytest.ini_options]
+pythonpath = "src"
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+]
