@@ -100,9 +100,8 @@ class ChunkedSimilarityMatrix(SimilarityMatrix):
             f"Matrix shape (final): {len(self.row_ids)} rows, "
             f"{len(self.column_ids)} columns")
         logger.info(
-            f"Processing in chunks of {
-                self.row_chunk_size}x{
-                self.column_chunk_size}")
+            "Processing in chunks of "
+            f"{self.row_chunk_size}x{self.column_chunk_size}")
         logger.info(
             f"Total chunks: {self.num_row_chunks} rows x " +
             f"{self.num_col_chunks} columns = " +
